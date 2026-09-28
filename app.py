@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, request, redirect, url_for
+from flask import Flask, jsonify, render_template, redirect, url_for, request
 import json
 from pymongo import MongoClient
 import os
@@ -33,7 +33,7 @@ def home():
     return render_template("index.html")
 
 
-# Form submission
+# Old form submission route
 @app.route("/submit", methods=["POST"])
 def submit():
 
@@ -59,6 +59,26 @@ def submit():
             name=request.form.get("name", ""),
             email=request.form.get("email", "")
         )
+
+
+# ---------------- TASK 3 ----------------
+
+# To-Do item submission API
+@app.route("/submittodoitem", methods=["POST"])
+def submit_todo_item():
+
+    item_name = request.form.get("itemName", "").strip()
+    item_description = request.form.get("itemDescription", "").strip()
+
+    if not item_name or not item_description:
+        return "Item Name and Item Description are required.", 400
+
+    collection.insert_one({
+        "itemName": item_name,
+        "itemDescription": item_description
+    })
+
+    return "To-Do item submitted successfully!"
 
 
 # Success page
